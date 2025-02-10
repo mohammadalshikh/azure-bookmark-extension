@@ -1,14 +1,14 @@
-CLIENT_IMP_FOLDER_ID = "";
+PARENT_FOLDER_ID = "";
 
-chrome.bookmarks.search('client imp', function(bookmarks) {
+chrome.bookmarks.search("client imp", function(bookmarks) {
     for (const bookmark of bookmarks) {
-        CLIENT_IMP_FOLDER_ID = bookmark.id;
+        PARENT_FOLDER_ID = bookmark.id;
         break;
     }
-    if (CLIENT_IMP_FOLDER_ID === "") {
-        chrome.bookmarks.create({ parentId: '1', title: 'client imp' },
+    if (PARENT_FOLDER_ID === "") {
+        chrome.bookmarks.create({ parentId: "1", title: "client imp" },
             (clientFolder) => {
-                CLIENT_IMP_FOLDER_ID = clientFolder.id
+                PARENT_FOLDER_ID = clientFolder.id
             }
         );
     }
@@ -31,19 +31,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 function handleClientFolder(clientName, pageTitle, pageURL) {
-    chrome.bookmarks.getChildren(CLIENT_IMP_FOLDER_ID, (folders) => {
-        const clientFolder = folders.find((folder) => folder.title.toLowerCase() === clientName.toLowerCase());
+    chrome.bookmarks.getChildren(PARENT_FOLDER_ID, (folders) => {
+        const clientFolder = folders.find((folder) => (!(folder.url)) && folder.title.toLowerCase() === clientName.toLowerCase());
 
         if (clientFolder) {
             handleIssuesFolder(clientFolder.id, pageTitle, pageURL);
         } else {
             chrome.bookmarks.create(
-                { parentId: CLIENT_IMP_FOLDER_ID, title: clientName },
-                (newClientFolder) => {
+                { parentId: PARENT_FOLDER_ID, title: clientName },
+                (clientFolder) => {
                     chrome.bookmarks.create(
-                        { parentId: newClientFolder.id, title: "issues" },
+                        { parentId: clientFolder.id, title: "issues" },
                         (issuesFolder) => {
-                            createNewFolder(issuesFolder, pageTitle, pageURL)
+                            handleTicketFolder(issuesFolder.id, pageTitle, pageURL)
                         }
                     );
                 }
@@ -54,18 +54,26 @@ function handleClientFolder(clientName, pageTitle, pageURL) {
 
 function handleIssuesFolder(clientFolderId, pageTitle, pageURL) {
     chrome.bookmarks.getChildren(clientFolderId, (folders) => {
-        const issuesFolder = folders.find((folder) => folder.title.toLowerCase() === "issues");
+        const issuesFolder = folders.find((folder) => (!(folder.url)) && folder.title.toLowerCase() === "issues");
         if (issuesFolder) {
-            createNewFolder(issuesFolder, pageTitle, pageURL)
+            handleTicketFolder(issuesFolder.id, pageTitle, pageURL)
+        }
+        else {
+            chrome.bookmarks.create(
+                {parentId: clientFolderId, title: "issues"},
+                (issuesFolder) => {
+                    handleTicketFolder(issuesFolder.id, pageTitle, pageURL)
+                }
+            );
         }
     });
 }
 
-function createNewFolder(issuesFolder, pageTitle, pageURL) {
+function handleTicketFolder(issuesFolderId, pageTitle, pageURL) {
     chrome.bookmarks.create(
-        { parentId: issuesFolder.id, title: pageTitle },
+        { parentId: issuesFolderId, title: pageTitle },
         (newFolder) => {
-            chrome.bookmarks.create({ parentId: newFolder.id, title: "Ticket", url: pageURL });
+            chrome.bookmarks.create({ parentId: newFolder.id, title: "ticket", url: pageURL });
         }
     );
 }
