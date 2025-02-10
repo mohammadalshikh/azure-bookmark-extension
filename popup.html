@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Organize Ticket</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                padding: 10px;
+                width: 200px;
+                background-color: #121212;
+                color: #e0e0e0;
+            }
+
+            input {
+                width: 93%;
+                margin-top: 10px;
+                padding: 5px;
+                font-size: 14px;
+                background-color: #333;
+                color: #e0e0e0;
+                border: 1px solid #555;
+            }
+
+            input:disabled {
+                background-color: #444;
+                color: #888;
+                border: 1px solid #777;
+            }
+
+            button {
+                width: 100%;
+                margin-top: 10px;
+                padding: 5px;
+                font-size: 14px;
+                background-color: #444;
+                color: #e0e0e0;
+                border: 1px solid #555;
+                cursor: pointer;
+            }
+
+            button:disabled {
+                background-color: #555;
+                color: #777;
+                cursor: default;
+            }
+
+            button:hover:not(:disabled) {
+                background-color: #666;
+            }
+        </style>
+    </head>
+
+    <body>
+        <input type="text" id="clientName" placeholder="add to">
+        <button id="ad-ticket-organizer">Submit</button>
+        <script src="popup.js"></script>
+    </body>
+
+</html>
