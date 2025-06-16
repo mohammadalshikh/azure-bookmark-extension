@@ -18,11 +18,12 @@ chrome.bookmarks.search("client imp", function(bookmarks) {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "organize-ticket") {
         const clientName = message.clientName;
+        const ticketTitle = message.ticketTitle?.trim();
 
         chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
             if (!tab || !tab.url) return;
 
-            const pageTitle = tab.title || "New Ticket";
+            const pageTitle = ticketTitle || tab.title || "New Ticket";
             const pageURL = tab.url;
 
             handleClientFolder(clientName, pageTitle, pageURL);
