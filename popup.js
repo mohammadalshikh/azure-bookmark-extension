@@ -28,5 +28,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    ticketTitleInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && !submitButton.disabled) {
+            submitButton.click();
+        }
+    });
+
     clientNameInput.focus();
 });
